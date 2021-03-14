@@ -1,0 +1,40 @@
+{
+  "name": "cms",
+  "version": "1.0.0",
+  "description": "koa编写的cms后台管理",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "./node_modules/.bin/nodemon app.js"
+  },
+  "author": "suwenhao",
+  "license": "ISC",
+  "dependencies": {
+    "@alicloud/pop-core": "^1.7.9",
+    "art-template": "^4.12.2",
+    "koa": "^2.5.1",
+    "koa-art-template": "^1.1.1",
+    "koa-bodyparser": "^4.2.1",
+    "koa-compress": "^3.0.0",
+    "koa-jsonp": "^2.0.2",
+    "koa-multer": "^1.0.2",
+    "koa-router": "^7.4.0",
+    "koa-send": "^5.0.0",
+    "koa-session": "^5.8.1",
+    "koa-static": "^5.0.0",
+    "koa-views": "^6.1.4",
+    "koa2-ueditor": "^1.0.1",
+    "moment": "^2.24.0",
+    "mongoose": "^5.1.5",
+    "multer": "^1.3.1",
+    "silly-datetime": "^0.1.2",
+    "svg-captcha": "^1.3.11",
+    "underscore": "^1.9.1",
+    "utility": "^1.14.0",
+    "uuid": "^7.0.3",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

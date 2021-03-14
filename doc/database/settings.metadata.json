@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"koacms.settings"}],"uuid":"b047c11d395046cc875856e9d0a5e0d1"}
