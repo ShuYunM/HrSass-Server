@@ -7,7 +7,6 @@
  *
  */
 var mongoose = require('mongoose')
-var db = require('./db.js')
 const sd = require('silly-datetime')
 var schema = new mongoose.Schema({
     name: {type: String}, // 名称

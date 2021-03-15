@@ -7,7 +7,6 @@
  *
  */
 var mongoose = require('mongoose')
-var db = require('./db.js')
 const sd = require('silly-datetime')
 var schema = new mongoose.Schema({
     pid: { type: String }, // 父标识

@@ -20,6 +20,7 @@ const router = new Router();
 
 const api = require("./routes/api"); // 后端接口
 const url = require("url");
+require('./model/db') // 引入数据库
 //配置session
 app.keys = ["some secret hurr"];
 app.use(
@@ -60,13 +61,13 @@ router.use(async (ctx, next) => {
   var pathname = url.parse(ctx.url).pathname;
    if (pathname === '/api/sys/login') {
       // 如果是登录直接放过
-      console.log("发起登录请求!")
      await next()
    }else {
     let { authorization } = ctx.request.header;
     if (authorization && ctx.session.user && ctx.session.user.token === authorization.split(' ')[1]) {
-        console.log("token认证通过")
-        await  next()
+      console.log("开始执行请求:" + pathname)
+      await  next()
+      console.log(pathname + "：执行请求完毕")
     }
     else {
        ctx.status = 401 // 超时token

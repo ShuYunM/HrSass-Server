@@ -3,10 +3,12 @@ const router = require("koa-router")();
 const UserModel = require('../../model/User')
 const RoleModel = require('../../model/Role')
 const UserInfoModel = require('../../model/UserInfo')
+const JobModel = require('../../model/Job')
 
 const UUID = require('uuid')
 const { checkMobile, checkPassword, md5Str, checkLength } = require("../../utils/validate");
 const User = require('../../model/User');
+const UserInfo = require('../../model/UserInfo');
 router.post("/login", async (ctx, next) => {
     let { mobile, password } = ctx.request.body;
     let json = { ...returnJSON }
@@ -120,6 +122,13 @@ router.post('/user', async (ctx) => {
  }
   newUser.password = md5Str('123456')
   let newObj = await UserModel.create(newUser) // 新增部门
+  await UserInfoModel.create({
+    userId: newObj._id, // 创建员工的关联数据
+    username: newObj.username,
+    mobile: newObj.mobile,
+    timeOfEntry: newObj.timeOfEntry
+  })
+  await JobModel.create({ userId: newObj._id })
    json.message = "员工新增成功"
    json.data = newObj
    ctx.body = json
@@ -142,6 +151,9 @@ router.delete('/user/:id', async (ctx) => {
     json.message = "超级管理员不能删除"
    }else {
     await UserModel.findByIdAndDelete(id)
+    await UserInfoModel.findOneAndDelete({ userId: id })
+    await JobModel.findOneAndDelete({ userId: id })
+
     json.message = "删除员工成功"
    }
   }else {
@@ -172,7 +184,16 @@ router.post('/user/batch', async (ctx) => {
        return
      }else{
       newUserList = newUserList.map(item => ({ ...item, password: md5Str('123456')}))
-      await UserModel.insertMany(newUserList) // 插入多条数据
+      const userList =  await UserModel.insertMany(newUserList) // 插入多条基本数据的资料
+      const userInfoList = userList.map(item => ({
+        userId: item._id,    
+        username: item.username,
+        mobile: item.mobile,
+        timeOfEntry: item.timeOfEntry }))
+        // 批量插入员工基本资料数据
+      const jobList = userList.map(item => ({  userId: item._id, }))
+      await  UserInfoModel.insertMany(userInfoList)
+      await  JobModel.insertMany(jobList) // 插入工作表
       json.message = "批量导入员工成功"
      }
   }else {
@@ -214,7 +235,28 @@ router.get("/user/:id", async (ctx, next) => {
  
   ctx.body = json
 })
-
+// 保存用户的基本资料
+router.put("/user/:id", async (ctx, next) => {
+  let json = { ...returnJSON }
+  let id = ctx.params.id; // 获取用户id
+  let newUser = ctx.request.body
+  const user = await UserModel.findById(id)
+  if (user) {
+     if(newUser.mobile !== user.mobile) {
+      json.success = false 
+      json.message = '手机号不能修改'
+     }
+     else {
+      newUser.password = md5Str(newUser.password)  // 更新密码
+      json.data =  await UserModel.findByIdAndUpdate(id, newUser)
+      json.message = '保存用户基本信息成功'
+     }
+  }else {
+    json.success = false 
+    json.message = '当前用户不存在'
+  }
+  ctx.body = json
+})
 // 角色管理
 // 获取所有角色列表
 router.get("/role", async (ctx, next) => {

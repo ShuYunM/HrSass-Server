@@ -7,7 +7,6 @@
  *
  */
 var mongoose = require('mongoose')
-var db = require('./db.js')
 
 var schema = new mongoose.Schema({
     username: { type: String }, // 用户名
