@@ -2,6 +2,7 @@ const returnJSON = require('./json')
 const router = require("koa-router")();
 const UserModel = require('../../model/User')
 const RoleModel = require('../../model/Role')
+const UserInfoModel = require('../../model/UserInfo')
 
 const UUID = require('uuid')
 const { checkMobile, checkPassword, md5Str, checkLength } = require("../../utils/validate");
