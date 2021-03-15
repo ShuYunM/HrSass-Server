@@ -4,6 +4,7 @@ const UserModel = require('../../model/User')
 const RoleModel = require('../../model/Role')
 const UserInfoModel = require('../../model/UserInfo')
 const JobModel = require('../../model/Job')
+const PermissionModel = require('../../model/Permission')
 
 const UUID = require('uuid')
 const { checkMobile, checkPassword, md5Str, checkLength } = require("../../utils/validate");
@@ -326,6 +327,79 @@ router.put("/role/:id", async (ctx, next) => {
        await RoleModel.findByIdAndUpdate(id, newRole )
        json.message = "更新角色详情成功"
    }
+  ctx.body = json
+})
+
+// 获取所有权限点
+router.get("/permission", async (ctx, next) => {
+  let json = { ...returnJSON }
+  let rows = await PermissionModel.find()
+  json.data = rows.map(item => ({ 
+     id: item._id, name: item.name,
+     description: item.description, 
+     type: item.type, 
+     code: item.code, 
+     description: item.description, 
+     pid: item.pid, 
+     enVisible: item.enVisible
+    }))
+  json.message = "获取权限点成功"
+  ctx.body = json
+})
+// 获取所有权限点
+router.post("/permission", async (ctx, next) => {
+  let json = { ...returnJSON }
+  const newPermission = ctx.request.body
+  if (newPermission && newPermission.name  && newPermission.code) {
+   let obj = await PermissionModel.create(newPermission)
+   json.data = obj
+   json.message = "添加权限点成功"
+  }else {
+    json.success = false
+    json.message = "权限点名称和标识不能为空"
+  }
+  ctx.body = json
+})
+// 删除权限点
+router.delete("/permission/:id", async (ctx, next) => {
+  let json = { ...returnJSON }
+  const id = ctx.params.id
+  if (id) {
+   await PermissionModel.findByIdAndDelete(id)
+   json.message = "删除权限点成功"
+  }else {
+    json.success = false
+    json.message = "权限点标识不能为空"
+  }
+  ctx.body = json
+})
+// 获取权限点详情
+router.get("/permission/:id", async (ctx, next) => {
+  let json = { ...returnJSON }
+  const id = ctx.params.id
+  if (id) {
+   const obj  = await PermissionModel.findById(id).lean()
+   json.data = { ...obj, id: obj._id }
+   json.message = "删除权限点成功"
+  }else {
+    json.success = false
+    json.message = "权限点标识不能为空"
+  }
+  ctx.body = json
+})
+// 获取所有权限点
+router.put("/permission/:id", async (ctx, next) => {
+  let json = { ...returnJSON }
+  const id = ctx.params.id
+  const newPermission = ctx.request.body
+  if (newPermission && newPermission.name  && newPermission.code) {
+   let obj = await PermissionModel.findByIdAndUpdate(id, newPermission)
+   json.data = obj
+   json.message = "更新权限点成功"
+  }else {
+    json.success = false
+    json.message = "权限点名称和标识不能为空"
+  }
   ctx.body = json
 })
 module.exports = router.routes();

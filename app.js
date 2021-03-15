@@ -65,9 +65,8 @@ router.use(async (ctx, next) => {
    }else {
     let { authorization } = ctx.request.header;
     if (authorization && ctx.session.user && ctx.session.user.token === authorization.split(' ')[1]) {
-      console.log("开始执行请求:" + pathname)
+      console.log("执行请求:" + pathname)
       await  next()
-      console.log(pathname + "：执行请求完毕")
     }
     else {
        ctx.status = 401 // 超时token
