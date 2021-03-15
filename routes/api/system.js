@@ -5,6 +5,7 @@ const RoleModel = require('../../model/Role')
 
 const UUID = require('uuid')
 const { checkMobile, checkPassword, md5Str, checkLength } = require("../../utils/validate");
+const User = require('../../model/User');
 router.post("/login", async (ctx, next) => {
     let { mobile, password } = ctx.request.body;
     let json = { ...returnJSON }
@@ -27,7 +28,7 @@ router.post("/login", async (ctx, next) => {
         }else {
           console.log("用户名或密码错误")
           json.message = "用户名或密码错误"
-          json.success = true
+          json.success = false
         }
        }else {
         json.message = "用户名或者密码的格式不正确"
@@ -128,16 +129,37 @@ router.post('/user', async (ctx) => {
       return 
   }
 })
+// 删除员工
+router.delete('/user/:id', async (ctx) => {
+  let  json = { ...returnJSON } 
+  let id = ctx.params.id; // 获取用户id
+  if (id) {
+   const user = await UserModel.findById(id)
+   if(user && user.mobile === '13800000002') {
+    //  如果是删除的管理员
+    json.success = false
+    json.message = "超级管理员不能删除"
+   }else {
+    await UserModel.findByIdAndDelete(id)
+    json.message = "删除员工成功"
+   }
+  }else {
+    json.message = "员工id不存在"
+    json.success = false
+  }
+  ctx.body = json
+})
 // 员工导入
 router.post('/user/batch', async (ctx) => {
   let  json = { ...returnJSON } 
-  const newUserList = ctx.request.body
+  let newUserList = ctx.request.body
   if (newUserList && newUserList.length) {
      let isSame = false
      let sameMobile = ""
-     newUserList.forEach(async item => {
-       let  obj = await UserModel.findOne({ mobile: item.mobile })
-       if(!isSame && obj) {
+     const list = await UserModel.find()
+     list.forEach(item => {
+       let  haveMobile = newUserList.some(user => user.mobile === item.mobile)
+       if(!isSame && haveMobile) {
          isSame = true
          sameMobile = item.mobile
        }
@@ -147,12 +169,15 @@ router.post('/user/batch', async (ctx) => {
        json.message = '当前系统已存在相同的手机号'+ sameMobile
        ctx.body = json
        return
+     }else{
+      newUserList = newUserList.map(item => ({ ...item, password: md5Str('123456')}))
+      await UserModel.insertMany(newUserList) // 插入多条数据
+      json.message = "批量导入员工成功"
      }
   }else {
     json.message = "未导入任何数据"
   }
   ctx.body = json
-
 })
 // 获取用户的基本资料
 router.get("/user/:id", async (ctx, next) => {
