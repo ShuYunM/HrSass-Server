@@ -1,11 +1,15 @@
 {
-  "name": "cms",
+  "name": "itheima-people",
   "version": "1.0.0",
   "description": "koa编写的cms后台管理",
   "main": "index.js",
+  "bin": "./app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "./node_modules/.bin/nodemon app.js"
+  },
+  "pkg": {
+    "scripts": "src/**/*.js"
   },
   "author": "suwenhao",
   "license": "ISC",

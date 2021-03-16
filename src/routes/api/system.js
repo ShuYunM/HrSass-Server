@@ -8,8 +8,6 @@ const PermissionModel = require('../../model/Permission')
 
 const UUID = require('uuid')
 const { checkMobile, checkPassword, md5Str, checkLength } = require("../../utils/validate");
-const User = require('../../model/User');
-const UserInfo = require('../../model/UserInfo');
 router.post("/login", async (ctx, next) => {
     let { mobile, password } = ctx.request.body;
     let json = { ...returnJSON }
@@ -248,7 +246,10 @@ router.put("/user/:id", async (ctx, next) => {
       json.message = '手机号不能修改'
      }
      else {
-      newUser.password = md5Str(newUser.password)  // 更新密码
+       if(newUser.password !== user.password) {
+         // 如果密码不等于原密码才去做加密 特殊处理
+         newUser.password = md5Str(newUser.password)  // 更新密码
+       }
       json.data =  await UserModel.findByIdAndUpdate(id, newUser)
       json.message = '保存用户基本信息成功'
      }

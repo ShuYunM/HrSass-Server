@@ -18,9 +18,9 @@ const Koa = require("koa"),
 const app = new Koa();
 const router = new Router();
 
-const api = require("./routes/api"); // 后端接口
+const api = require("./src/routes/api"); // 后端接口
 const url = require("url");
-require('./model/db') // 引入数据库
+require('./src/model/db') // 引入数据库
 //配置session
 app.keys = ["some secret hurr"];
 app.use(

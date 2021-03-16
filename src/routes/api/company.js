@@ -2,7 +2,6 @@ const returnJSON = require('./json')
 const router = require("koa-router")();
 const CompanyModel = require('../../model/Company')
 const { checkLength } = require('../../utils/validate')
-const UUID = require('uuid')
 
 router.get('/:id', async (ctx, next) => {
     const id = ctx.params.id
