@@ -42,17 +42,55 @@ router.post("/login", async (ctx, next) => {
 // 获取用户的基本资料
 router.post("/profile", async (ctx, next) => {
   let json = { ...returnJSON }
+  const roles =  await getPermissionPoints(ctx)
   json.data = {
     userId: ctx.session.user._id,
     mobile: ctx.session.user.mobile,
     username: ctx.session.user.username,
-    roles: {
-      menus: []
-    }
+    roles
   }
   json.message = "获取资料成功"
   ctx.body = json
 })
+// 获取权限点数据
+const  getPermissionPoints = async (ctx) => {
+  let menus = [], points = []
+  const user = await UserModel.findById(ctx.session.user._id)
+  const permission = await PermissionModel.find()
+  if (ctx.session.user.mobile === '13800000002') {
+    // 如果是管理员 则拥有所有的权限
+    menus = permission.filter(item => item.type === 1).map(item => item.code) // 所有的菜单的权限点
+    points = permission.filter(item => item.type === 2).map(item => item.code) // 所有按钮的权限点
+  }else {
+    const roles = await RoleModel.find()
+    let  pList = new Set() // 当前所有的权限点
+    user.roleIds.forEach(roleId => {
+      const currentRole = roles.find(item => item._id == roleId)
+      if (currentRole) {
+        currentRole.permIds.forEach(id => {
+          pList.add(id)
+        })
+      }
+    })
+     pList = [...pList] // 转化成数组
+     pList.forEach(id =>  {
+     const pObj = permission.find(p => p._id == id)
+      if (pObj) {
+          if (pObj.type === 1) {
+            menus.push(pObj.code)
+          }
+          if (pObj.type === 2) {
+            points.push(pObj.code)
+          }
+      }
+    })
+  }
+  return  {
+    menus,
+    points,
+    apis: []
+  }
+}
 // 获取员工的简单列表
 router.get('/user/simple', async (ctx) => {
   let json = { ...returnJSON }
@@ -224,7 +262,7 @@ router.get("/user/:id", async (ctx, next) => {
       inServiceStatus: user.inServiceStatus,
       departmentName: user.departmentName,
       staffPhoto: user.staffPhoto,
-      
+      roleIds: user.roleIds
     }
     json.message = "获取用户基本信息成功"
   }else {
@@ -232,6 +270,20 @@ router.get("/user/:id", async (ctx, next) => {
     json.message = '获取用户基本信息失败'
   }
  
+  ctx.body = json
+})
+// 给用户分配角色
+router.put("/user/assignRoles", async (ctx, next) => {
+  let json = { ...returnJSON }
+  const { id, roleIds } = ctx.request.body
+  const user = await UserModel.findById(id)
+  if (user) {
+      json.data =  await UserModel.findByIdAndUpdate(id, { roleIds  })
+      json.message = '给用户分配角色成功'
+  }else {
+    json.success = false 
+    json.message = '当前用户不存在'
+  }
   ctx.body = json
 })
 // 保存用户的基本资料
@@ -310,13 +362,28 @@ router.get("/role/:id", async (ctx, next) => {
           id: item._id,
           name: item.name,
           description: item.description,
-          companyId: item.companyId
+          companyId: item.companyId,
+          permIds: item.permIds
       }
       json.message = "查询角色详情成功"
   }else {
       json.message = "查询角色详情失败"
       json.success = false
   }  
+  ctx.body = json
+})
+// 给角色分配权限
+router.put("/role/assignPrem", async (ctx, next) => {
+  let  json = { ...returnJSON } 
+    const { id, permIds  } = ctx.request.body
+    if (id &&  permIds) {
+     let obj =  await RoleModel.findByIdAndUpdate(id, { permIds  } )
+     console.log(obj)
+       json.message = "分配权限成功"
+   }else {
+     json.success = false
+     json.message = "角色Id和更新permIds不能为空"
+   }
   ctx.body = json
 })
 // 更新角色详情

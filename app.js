@@ -66,7 +66,17 @@ router.use(async (ctx, next) => {
     let { authorization } = ctx.request.header;
     if (authorization && ctx.session.user && ctx.session.user.token === authorization.split(' ')[1]) {
       console.log("执行请求:" + pathname)
-      await  next()
+      try {
+        await  next()
+      } catch (error) {
+        // ctx.status = 505
+        ctx.body = {
+          message: "程序执行遇到异常！异常信息：" + error.message,
+          success: false,
+          code: 10003,
+          data: null
+        }
+      }
     }
     else {
        ctx.status = 401 // 超时token

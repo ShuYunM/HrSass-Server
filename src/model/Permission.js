@@ -10,7 +10,7 @@ var mongoose = require('mongoose')
 
 var schema = new mongoose.Schema({
     name: { type: String }, // 用户名
-    type: {type: String}, // 手机号
+    type: {type: Number}, // 手机号
     code: { type:  String}, // 密码
     description: { type: String }, // 用户Id
     pid: { type: String },
