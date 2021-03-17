@@ -5,7 +5,8 @@
   "main": "index.js",
   "bin": "./app.js",
   "scripts": {
-    "start": "node app.js",
+    "serve": "node app.js",
+    "start": "node reset.js && node app.js",
     "dev": "./node_modules/.bin/nodemon app.js"
   },
   "pkg": {
