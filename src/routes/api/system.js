@@ -47,7 +47,9 @@ router.post("/profile", async (ctx, next) => {
     userId: ctx.session.user._id,
     mobile: ctx.session.user.mobile,
     username: ctx.session.user.username,
-    roles
+    roles,
+    companyId: '1',
+    company: '传智播客'
   }
   json.message = "获取资料成功"
   ctx.body = json
@@ -262,7 +264,9 @@ router.get("/user/:id", async (ctx, next) => {
       inServiceStatus: user.inServiceStatus,
       departmentName: user.departmentName,
       staffPhoto: user.staffPhoto,
-      roleIds: user.roleIds
+      roleIds: user.roleIds,
+      companyId: '1',
+      companyName: '传智播客'
     }
     json.message = "获取用户基本信息成功"
   }else {

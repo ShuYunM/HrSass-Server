@@ -21,19 +21,15 @@ const Koa = require("koa"),
 
  // axios处理
 axios.defaults.baseURL = 'http://ihrm-java.itheima.net/' // 设置请求的基地址
-axios.interceptors.request.use(config=>{
-  　　config.headers['Content-Type']="application/json";
-      config.data= JSON.stringify(config.data);  
-     return config;
-  })
 // axios响应拦截器
-axios.interceptors.response.use(response => {
+axios.interceptors.response.use(response => { 
   return response.data
 }, error => {
-  if(error.response && typeof response === 'object') {
+  console.log(error.response)
+  if(error.response && error.response.data) {
     return error.response.data
   }
-  return { data: null, message: '代理线上请求出现异常: '+ error.message, success : false, code: 10006 }
+  return { data: null, message: '代理线上请求出现异常: '+ error.message, success : false, code:  10006 }
 })
 
 // 初始化web服务
@@ -151,9 +147,9 @@ app.use(async ctx => {
 })
 // 获取线上的token
 const getToken = async (ctx) => {
-//    if (ctx.session.lineToken) {
-//     return ctx.session.lineToken
-//  }
+   if (ctx.session.lineToken) {
+    return ctx.session.lineToken
+ }
  const   { success, data, message } = await axios.post('api/sys/login', { mobile: '13800000002', password: '123456' })
  if (success) {
     ctx.session.lineToken = data
