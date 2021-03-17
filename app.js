@@ -16,18 +16,16 @@ const Koa = require("koa"),
   jsonp = require("koa-jsonp");
   axios = require('axios')
   api = require("./src/routes/api"); // 后端接口
-  url = require("url");
+  url = require("url"),
   require('./src/model/db') // 引入数据库
-
  // axios处理
 axios.defaults.baseURL = 'http://ihrm-java.itheima.net/' // 设置请求的基地址
 // axios响应拦截器
 axios.interceptors.response.use(response => { 
   return response.data
 }, error => {
-  console.log(error.response)
-  if(error.response && error.response.data) {
-    return error.response.data
+  if(error.response && error.response.data) { 
+    return  { status: error.status, ...error.response.data  }
   }
   return { data: null, message: '代理线上请求出现异常: '+ error.message, success : false, code:  10006 }
 })
