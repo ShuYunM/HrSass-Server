@@ -16,6 +16,7 @@
   "dependencies": {
     "@alicloud/pop-core": "^1.7.9",
     "art-template": "^4.12.2",
+    "axios": "^0.21.1",
     "koa": "^2.5.1",
     "koa-art-template": "^1.1.1",
     "koa-bodyparser": "^4.2.1",

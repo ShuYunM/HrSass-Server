@@ -378,7 +378,6 @@ router.put("/role/assignPrem", async (ctx, next) => {
     const { id, permIds  } = ctx.request.body
     if (id &&  permIds) {
      let obj =  await RoleModel.findByIdAndUpdate(id, { permIds  } )
-     console.log(obj)
        json.message = "分配权限成功"
    }else {
      json.success = false
