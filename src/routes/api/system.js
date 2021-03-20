@@ -248,8 +248,9 @@ router.get("/user/:id", async (ctx, next) => {
     return
   }
   const user = await UserModel.findById(id)
-  if (user) {
+  if (user) {  
     json.data = {
+      staffPhoto: user.staffPhoto,
       id: user._id,
       mobile: user.mobile,
       username: user.username,
@@ -263,7 +264,6 @@ router.get("/user/:id", async (ctx, next) => {
       correctionTime: user.correctionTime,
       inServiceStatus: user.inServiceStatus,
       departmentName: user.departmentName,
-      staffPhoto: user.staffPhoto,
       roleIds: user.roleIds,
       companyId: '1',
       companyName: '传智播客'
