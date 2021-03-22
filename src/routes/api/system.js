@@ -105,7 +105,7 @@ router.get('/user/simple', async (ctx) => {
 // 获取员工列表
 router.get('/user', async (ctx) => {
   let json = { ...returnJSON }
-  let { page, pagesize } = ctx.query // 查询参数
+  let { page, size: pagesize } = ctx.query // 查询参数
   page = page || 1
   pagesize = pagesize || 10
   var skip = (parseInt(page) -1) * parseInt(pagesize);
