@@ -10,10 +10,12 @@
     "dev": "./node_modules/.bin/nodemon app.js"
   },
   "pkg": {
-    "scripts": ["src/**/*.js" ] ,
+    "scripts": [
+      "src/**/*.js"
+    ],
     "assets": [
       "src/**/*"
-    ] 
+    ]
   },
   "author": "suwenhao",
   "license": "ISC",
